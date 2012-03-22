@@ -23,19 +23,19 @@ class block_twitter extends block_base {
 			$this->search = $this->config->search; 
 		} else { // TODO: at some point need to check if not in a course context and rework the default
 			// If no Twitter Search string is set find the editingteacher
-//		if($context = get_context_instance(CONTEXT_COURSE, $COURSE->id)) {
-  //  if($roleid = $DB->get_record('role', array('shortname'=>'editingteacher'), 'id')) {
-    // if($teacher = get_role_users($roleid, $context, false, 'u.twitter')) {
-      // Good to go
-    // }
-   // }
- //  }	
+			$context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+			$roleid = $DB->get_record('role', array('shortname'=>get_string('teacher_role', 'block_twitter')), 'id');
+			$teacher = get_role_users($roleid, $context, false, 'u.id, u.twitter'); 
+			
 			// If the editingteacher has a Twitter ID set in their profile use that
-			if(!empty($teacher->twitter)) {
-				$this->search = $teacher->twitter;
+			if(!empty($teacher)) {
+				foreach($teacher as $item) {
+					$usernames .= (!empty($item->twitter)) ? $item->twitter.',' : '' ;
+				}
+				$this->search = (!empty($usernames)) ? substr($usernames, 0, -1) : get_string('default_twitter', 'block_twitter');
 			} else {
-				// If no Twitter ID set in profile use the main USC twitter ID as a default
-				$this->search = 'USCedu';
+				// If no Twitter ID set in profile use the deafult twitter ID
+				$this->search = get_string('default_twitter', 'block_twitter');
 			}
 		}
 		
@@ -57,9 +57,10 @@ class block_twitter extends block_base {
 		global $CFG, $COURSE, $SITE, $USER, $SCRIPT, $OUTPUT, $PAGE;
 		
 		// Include the needed JS
-		$PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/twitter/js/jquery.js'));
-		$PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/twitter/js/jquery.jtweetsanywhere-1.3.1.min.js'));
+		$PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/twitter/js/jquery.jtweetsanywhere-1.3.1.js'));
 		$PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/twitter/js/jquery.jtweetsanywhere.custom.js'));
+		//$PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/twitter/js/jquery.getUrlParam.js'));
+		$PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/twitter/js/jquery.cookie.js'));
 		$PAGE->requires->css(new moodle_url($CFG->wwwroot.'/blocks/twitter/css/jquery.jtweetsanywhere-1.3.1.css'));
 		
 		if ($this->content !== NULL) {

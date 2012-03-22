@@ -6,7 +6,12 @@ class block_twitter_edit_form extends block_edit_form {
 		$mform->addElement('header', get_string('config_header', 'block_twitter'));
 		
 		$mform->addElement('html', '<p>If fields are left blank the following defaults will be used:</p>');
-		$mform->addElement('html', '<ul><li>Block Header: Twitter Username\'s Twitter Feed</li><li>Twitter Username: Teacher\'s Twitter id or USCedu</li><li># of Tweets: 10 (0 defaults as well)</li></ul>');
+		$mform->addElement('html', 
+			'<ul>
+				<li>Block Header: Twitter Username\'s Twitter Feed</li>
+				<li>Twitter Username: Teacher\'s Twitter id or USCedu (Can be comma seperated list)</li>
+				<li># of Tweets: 10 (Max of 50)</li>
+			</ul>');
 		
 		// Block title
 		$mform->addElement('text', 'config_title', get_string('block_header', 'block_twitter'));
